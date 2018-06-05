@@ -4,5 +4,6 @@ export declare class UserController {
     private userRepo;
     constructor(userRepo: UserRepository);
     createUser(user: User): Promise<User>;
-    getAllUsers(): Promise<Array<User>>;
+    findUsers(): Promise<User[]>;
+    findUsersById(id: number): Promise<User>;
 }

@@ -2,7 +2,7 @@
 
 // import {inject} from @loopback/context;
 import { repository } from "@loopback/repository";
-import {LoginRepository } from "../repositories/login.repository";
+import { LoginRepository } from "../repositories/login.repository";
 import { HttpErrors, post, get, requestBody } from "@loopback/rest";
 import { Login } from "../models/login";
 import { UserRepository } from '../repositories';

@@ -15,36 +15,48 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // import {inject} from @loopback/context;
 const repository_1 = require("@loopback/repository");
-const login_repository_1 = require("../repositories/login.repository");
 const rest_1 = require("@loopback/rest");
-const login_1 = require("../models/login");
+const repositories_1 = require("../repositories");
+const models_1 = require("../models");
 let LoginController = class LoginController {
-    constructor(loginRepo) {
-        this.loginRepo = loginRepo;
+    constructor(userRepo) {
+        this.userRepo = userRepo;
     }
-    async createLogin(login) {
-        return await this.loginRepo.create(login);
-    }
-    async getAllLogin() {
-        return await this.loginRepo.find();
+    async loginUser(user) {
+        // Check that email and password are both supplied
+        if (!user.email || !user.password) {
+            throw new rest_1.HttpErrors.Unauthorized('invalid credentials');
+        }
+        // Check that email and password are valid
+        let userExists = !!(await this.userRepo.count({
+            and: [
+                { email: user.email },
+                { password: user.password },
+            ],
+        }));
+        if (!userExists) {
+            throw new rest_1.HttpErrors.Unauthorized('invalid credentials');
+        }
+        return await this.userRepo.findOne({
+            where: {
+                and: [
+                    { email: user.email },
+                    { password: user.password }
+                ],
+            },
+        });
     }
 };
 __decorate([
     rest_1.post('/login'),
     __param(0, rest_1.requestBody()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [login_1.Login]),
+    __metadata("design:paramtypes", [models_1.User]),
     __metadata("design:returntype", Promise)
-], LoginController.prototype, "createLogin", null);
-__decorate([
-    rest_1.get('/login'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], LoginController.prototype, "getAllLogin", null);
+], LoginController.prototype, "loginUser", null);
 LoginController = __decorate([
-    __param(0, repository_1.repository(login_repository_1.LoginRepository.name)),
-    __metadata("design:paramtypes", [login_repository_1.LoginRepository])
+    __param(0, repository_1.repository(repositories_1.UserRepository)),
+    __metadata("design:paramtypes", [repositories_1.UserRepository])
 ], LoginController);
 exports.LoginController = LoginController;
 //# sourceMappingURL=login.controller.js.map
