@@ -6,4 +6,5 @@ export declare class UserController {
     createUser(user: User): Promise<User>;
     findUsers(): Promise<User[]>;
     findUsersById(id: number): Promise<User>;
+    getDonationsByUserId(userId: number, username: string, dateFrom: Date, authorizationToken: String): Promise<void>;
 }

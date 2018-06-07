@@ -38,4 +38,19 @@ export class UserController {
     return await this.userRepo.findById(id);
   }
 
+  @get('/users/{id}/donations')
+  async getDonationsByUserId (
+    @param.path.number('id') userId: number,
+    @param.query.string('username') username: string,
+    @param.query.date('date_from') dateFrom: Date,
+    @param.query.string('Authorization') authorizationToken: String
+
+  )
+ {
+  console.log(userId);
+  console.log(username);
+  console.log(dateFrom);
+  console.log(authorizationToken);
+ } 
+
 }
