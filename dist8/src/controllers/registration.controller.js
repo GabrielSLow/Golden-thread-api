@@ -24,15 +24,26 @@ let RegistrationController = class RegistrationController {
     }
     async registerUser(user) {
         // Check that required fields are supplied
-        if (!user.email || !user.password) {
+        if (!user.email || !user.phonenumber || !user.username || !user.password) {
             throw new rest_1.HttpErrors.BadRequest('missing data');
         }
         // Check that user does not already exist
-        let userExists = !!(await this.userRepo.count({ email: user.email }));
+        let userExists = !!(await this.userRepo.count([{ email: user.email }, { phonenumber: user.phonenumber }, { username: user.username },
+            { password: user.password },
+        ]));
         if (userExists) {
             throw new rest_1.HttpErrors.BadRequest('user already exists');
         }
-        return await this.userRepo.create(user);
+        return await this.userRepo.findOne({
+            where: {
+                and: [
+                    { email: user.email },
+                    { phonenumber: user.phonenumber },
+                    { username: user.username },
+                    { password: user.password }
+                ],
+            },
+        });
     }
 };
 __decorate([

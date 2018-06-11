@@ -11,7 +11,7 @@ id?: number;
 @property({
     type: 'string'
 })
-Email: string
+email: string
 
     @property({
         type: 'string'

@@ -19,9 +19,46 @@ const user_repository_1 = require("../repositories/user.repository");
 const rest_1 = require("@loopback/rest");
 const user_1 = require("../models/user");
 const rest_2 = require("@loopback/rest");
+const login_1 = require("../models/login");
+const jsonwebtoken_1 = require("jsonwebtoken");
 let UserController = class UserController {
     constructor(userRepo) {
         this.userRepo = userRepo;
+    }
+    // @post('/registration')
+    // async createUser(@requestBody() user: User) {
+    //   return await this.userRepo.create(user);
+    // }
+    async login(login) {
+        var users = await this.userRepo.find();
+        var username = login.username;
+        var password = login.password;
+        for (var i = 0; i < users.length; i++) {
+            var user = users[i];
+            if (user.username == username && user.password == password) {
+                var jwt = jsonwebtoken_1.sign({
+                    user: user,
+                }, 'shh', {
+                    issuer: 'auth.ix.co.za',
+                    audience: 'ix.co.za',
+                });
+                return {
+                    token: jwt,
+                };
+            }
+        }
+        throw new rest_2.HttpErrors.NotFound('User not found, sorry!');
+    }
+    async loginWithQuery(login) {
+        var users = await this.userRepo.find({
+            where: {
+                and: [{ username: login.username }, { password: login.password }],
+            },
+        });
+        if (users.length == 0) {
+            throw new rest_2.HttpErrors.NotFound('User not found, sorry!');
+        }
+        return users[0];
     }
     async createUser(user) {
         return await this.userRepo.create(user);
@@ -44,6 +81,20 @@ let UserController = class UserController {
         console.log(authorizationToken);
     }
 };
+__decorate([
+    rest_1.post('/login'),
+    __param(0, rest_1.requestBody()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_1.Login]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "login", null);
+__decorate([
+    rest_1.post('/login-with-query'),
+    __param(0, rest_1.requestBody()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_1.Login]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "loginWithQuery", null);
 __decorate([
     rest_1.post('/users'),
     __param(0, rest_1.requestBody()),

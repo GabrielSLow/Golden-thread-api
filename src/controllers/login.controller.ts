@@ -13,32 +13,32 @@ export class LoginController {
     @repository(UserRepository) protected userRepo: UserRepository,
   ) {}
 
-  @post('/login')
-  async loginUser(@requestBody() user: User): Promise<User> {
-    // Check that email and password are both supplied
-    if (!user.email || !user.password) {
-      throw new HttpErrors.Unauthorized('invalid credentials');
-    }
+  // @post('/login')
+  // async loginUser(@requestBody() user: User): Promise<User> {
+  //   // Check that username and password are both supplied
+  //   if (!user.username || !user.password) {
+  //     throw new HttpErrors.Unauthorized('invalid credentials');
+  //   }
 
-    // Check that email and password are valid
-    let userExists: boolean = !!(await this.userRepo.count({
-      and: [
-        { email: user.email },
-        { password: user.password },
-      ],
-    }));
+    // // Check that email and password are valid
+    // let userExists: boolean = !!(await this.userRepo.count({
+    //   and: [
+    //     { username: user.username },
+    //     { password: user.password },
+    //   ],
+    // }));
 
-    if (!userExists) {
-      throw new HttpErrors.Unauthorized('invalid credentials');
-    }
+  //   if (!userExists) {
+  //     throw new HttpErrors.Unauthorized('invalid credentials');
+  //   }
 
-    return await this.userRepo.findOne({
-      where: {
-        and: [
-          { email: user.email },
-          { password: user.password }
-        ],
-      },
-    });
-  }
+  //   return await this.userRepo.findOne({
+  //     where: {
+  //       and: [
+  //         { username: user.username },
+  //         { password: user.password }
+  //       ],
+  //     },
+  //   });
+  // }
 }
